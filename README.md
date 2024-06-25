@@ -14,6 +14,7 @@ QQ机器人，可以收发个人或群消息。
 
 
 ## 用法
+登录成功后，将下面的 verifyKey 和 qq 改为你自己的，然后就能用代码收发 QQ 消息了。
 ```AutoHotkey
 verifyKey := "xxxxxxxx"                                                   ; 步骤2记录下的 verifyKey
 qq        := 123456                                                       ; 步骤3登录的 qq 号
