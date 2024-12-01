@@ -10,11 +10,13 @@
 	mirai-api-http-xxxxxx.mirai2.jar
 8. 下载插件 https://github.com/KasukuSakura/mirai-login-solver-sakura/releases
 	mirai-login-solver-sakura-xxxxxx.mirai2.jar
-9. 将上述下载的两个插件 .jar 文件放入 D:\mirai\plugins 中。
-10. 在 D:\mirai 中运行 mcl.cmd ，出现控制台，开始一通自动下载。
-11. 等待控制台出现绿字 mirai-console started successfully 后，此时总算安装完成了。
-12. 保留 config\Console\EndUserReadme.yml
+9. 下载插件 https://github.com/MrXiaoM/fpv/releases
+	trpgbot-xxxxxx.mirai2.jar
+10. 将上述下载的三个插件 .jar 文件放入 D:\mirai\plugins 中。
+11. 在 D:\mirai 中运行 mcl.cmd ，出现控制台，开始一通自动下载。
+12. 等待控制台出现绿字 mirai-console started successfully 后，此时总算安装完成了。
+13. 保留 config\Console\EndUserReadme.yml
 	避免再次阅读强制说明
-13. 删除 config data logs 3个目录中其它全部文件。
-14. 修改 mcl.cmd 中的 JAVA_BINARY 为 JAVA_BINARY="java\bin\java.exe"
+14. 删除步骤13中保留文件以外的 config data logs modules 4个目录中其它全部文件。
+15. 修改 mcl.cmd 中的 JAVA_BINARY 为 JAVA_BINARY="java\bin\java.exe"
 	此时即可得到整合包。

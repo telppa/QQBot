@@ -3,12 +3,14 @@ QQ机器人，可以收发个人或群消息。
 
 
 ## 准备
+0. 先将待登录 qq 的密码改成一个不常用，不怕泄露的密码。
+	- 此版本为应对 qq 难以登录的问题，加入了第三方数据包签名服务，故向外发出的数据包（其中包含密码及消息内容）存在泄露的可能。
 1. 运行 `mirai\mcl.cmd` 。
 	- 如果用沙盒运行 mcl.cmd ，那么需要在运行前删除 mirai\plugins\mirai-login-solver-xxxxxx.jar 。
 2. 在控制台界面找到并记录 `running with verifyKey: xxxxxxxx` 。
-3. 在控制台界面输入命令 `login 123456 password IPAD` 回车。
-	- 上述命令的意思是用密码 password 登录 qq 123456 的 IPAD 端；
-	- 登录 IPAD 端的好处是不会把你手机和电脑的挤下线；
+3. 在控制台界面输入命令 `login 123456 password ANDROID_PAD` 回车。
+	- 上述命令的意思是用密码 password 登录 qq 123456 的 ANDROID_PAD 端；
+	- 登录 ANDROID_PAD 端的好处是不会把你手机和电脑的挤下线；
 	- 登录过程中可能需要验证，照着做就行了。
 4. 控制台出现绿字 `Bot login successful` 代表登录成功了。
 
@@ -19,13 +21,13 @@ QQ机器人，可以收发个人或群消息。
 verifyKey := "xxxxxxxx"                                                   ; 步骤2记录下的 verifyKey
 qq        := 123456                                                       ; 步骤3登录的 qq 号
 qqbot     := new mirai(verifyKey, qq)                                     ; 连接 bot
-会话信息  := qqbot.获取会话信息()                                         ; 获取 bot 信息
-图片网址  := qqbot.上传图片("d:\test.jpg").url                            ; 上传图片并得到 url
-ret       := qqbot.发送好友消息(对方qq号, "测试", {img:图片网址}, "通过") ; 发送一条消息（文字+图片+文字）
+会话信息  := qqbot.获取会话信息()                                           ; 获取 bot 信息
+图片网址  := qqbot.上传图片("d:\test.jpg").url                             ; 上传图片并得到 url
+ret       := qqbot.发送好友消息(对方qq号, "测试", {img:图片网址}, "通过")    ; 发送一条消息（文字+图片+文字）
 
 loop 5
 {
-  收到的消息 := qqbot.获取队列头部()                                      ; 获取收到的消息
+  收到的消息 := qqbot.获取队列头部()                                        ; 获取收到的消息
   Sleep 5000
 }
 
