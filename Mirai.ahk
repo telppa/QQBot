@@ -15,28 +15,29 @@
 目前只封装了部分私聊功能，暂不包含任何群聊功能。
 api 文档地址：
   https://github.com/project-mirai/mirai-api-http/blob/master/docs/adapter/HttpAdapter.md
-
-已知问题：
-  throw 后会导致 qqbot 直接被清空，触发 __Delete() 并释放失败
 */
 class Mirai
 {
-  static 主机    := "http://127.0.0.1:8080"
-  static 设置    := "Charset:UTF-8"
-  static 请求头  := "Content-Type:application/json"
-  static session := ""
-  static qq      := ""
-  static 状态码  := {0:   "正常"
-            , 1:   "错误的verify key"
-            , 2:   "指定的Bot不存在"
-            , 3:   "Session失效或不存在"
-            , 4:   "Session未认证(未激活)"
-            , 5:   "发送消息目标不存在(指定的对象不存在)"
-            , 6:   "文件不存在(指定的本地图片不存在)"
-            , 10:  "无操作权限(Bot没有对应操作的权限)"
-            , 20:  "Bot被禁言(Bot无法向指定群发送消息)"
-            , 30:  "消息过长"
-            , 400: "错误的访问(请求参数错误等)"}
+  ; Mirai 的变量，存于 base 中 
+  static 主机   := "http://127.0.0.1:8080"
+  static 设置   := "Charset:UTF-8"
+  static 状态码 := {0:   "正常"
+                  , 1:   "错误的verify key"
+                  , 2:   "指定的Bot不存在"
+                  , 3:   "Session失效或不存在"
+                  , 4:   "Session未认证(未激活)"
+                  , 5:   "发送消息目标不存在(指定的对象不存在)"
+                  , 6:   "文件不存在(指定的本地图片不存在)"
+                  , 10:  "无操作权限(Bot没有对应操作的权限)"
+                  , 20:  "Bot被禁言(Bot无法向指定群发送消息)"
+                  , 30:  "消息过长"
+                  , 400: "错误的访问(请求参数错误等)"}
+  
+  ; 每个 Mirai 实例的变量，存于 base 同级
+  请求头    := "Content-Type:application/json"
+  session   := ""
+  qq        := ""
+  lastError := ""
   
   __New(verifyKey, qq)
   {
@@ -47,7 +48,8 @@ class Mirai
     session := this.http("/verify", {"verifyKey":verifyKey}, "认证失败").session
     
     ; 绑定
-    this.http("/bind", {"sessionKey":session, "qq":qq}, "绑定失败")
+    if (!this.http("/bind", {"sessionKey":session, "qq":qq}, "绑定失败"))
+      return
     
     ; 为后面所有需要 session 参数的请求省略此参数
     this.请求头  .= "`nsessionKey: " session
@@ -118,6 +120,9 @@ class Mirai
   
   解析队列(队列)
   {
+    if (队列 = "")
+      return
+    
     ret := []
     for i, v in 队列
     {
@@ -140,7 +145,10 @@ class Mirai
   上传图片(filepath, type := "friend")
   {
     if (!FileExist(filepath))
-      throw Exception("上传图片失败", -1, "指定图片不存在：" filepath)
+    {
+      this.lastError := {Message:"上传图片失败", Extra:"指定图片不存在：" filepath}
+      return
+    }
     
     URL        := this.主机 "/uploadImage"
     out_Header := this.请求头
@@ -149,9 +157,15 @@ class Mirai
     try ret := json.load(WinHttp.Download(URL, this.设置, out_Header, out_PostData))
     
     if (ret.url)
+    {
+      this.lastError := ""
       return ret
+    }
     else
-      throw Exception("上传图片失败", -1, ret.msg)
+    {
+      this.lastError := {Message:"上传图片失败", Extra:ret.msg}
+      return
+    }
   }
   
   ; 可验证 http 服务是否开启
@@ -201,14 +215,20 @@ class Mirai
     URL      := this.主机 interface
     提交数据 := IsObject(提交数据) ? json.dump(提交数据) : 提交数据
     
-    try ret := json.load(WinHttp.Download(URL, this.设置, this.请求头, 提交数据))
+    try
+      ret := json.load(WinHttp.Download(URL, this.设置, this.请求头, 提交数据))
+    catch
+    {
+      this.lastError := {Message:报错信息}
+      return
+    }
     
-    if (!返回值存在状态码)
-      return ret
-    else
+    if (返回值存在状态码)
     {
       if (ret.code = 0)
       {
+        this.lastError := ""
+        
         ; 数据存于 data 中
         if (ret.HasKey("data"))
           return ret.data
@@ -221,7 +241,15 @@ class Mirai
         }
       }
       else
-        throw Exception(报错信息, -2, this.状态码(ret.code))
+      {
+        this.lastError := {Message:报错信息, Extra:this.状态码(ret.code)}
+        return
+      }
+    }
+    else
+    {
+      this.lastError := ""
+      return ret
     }
   }
 }
