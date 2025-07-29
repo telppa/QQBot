@@ -1,45 +1,41 @@
 # QQBot
-QQ机器人，可以收发个人或群消息。
+QQ机器人，可以实时收发个人或群消息等。
+
+
+## 兼容
+因 Mirai 项目已实际不可用，现改用 NapCat 项目作为接口封装基础。
+由于两者 API 有所区别，新接口基本不兼容旧接口。
 
 
 ## 准备
-0. 先将待登录 qq 的密码改成一个不常用，不怕泄露的密码。
-	- 此版本为应对 qq 难以登录的问题，加入了第三方数据包签名服务，故向外发出的数据包（其中包含密码及消息内容）存在泄露的可能。
-1. 运行 `mirai\mcl.cmd` 。
-	- 如果用沙盒运行 mcl.cmd ，那么需要在运行前删除 mirai\plugins\mirai-login-solver-xxxxxx.jar 。
-2. 在控制台界面找到并记录 `running with verifyKey: xxxxxxxx` 。
-3. 在控制台界面输入命令 `login 123456 password ANDROID_PAD` 回车。
-	- 上述命令的意思是用密码 password 登录 qq 123456 的 ANDROID_PAD 端；
-	- 登录 ANDROID_PAD 端的好处是不会把你手机和电脑的挤下线；
-	- 登录过程中可能需要验证，照着做就行了。
-4. 控制台出现绿字 `Bot login successful` 代表登录成功了。
+1. 运行 `NapCat.Shell.Windows.OneKey\NapCatInstaller.exe`
+	- 等待安装完成后可得到一个无头版 NapCatQQ 机器人。
+2. 运行 `NapCat.xxxxx.Shell\napcat.bat`
+3. 使用手机 QQ 扫步骤2出现的二维码。
+	- 建议在手机上勾选 “下次登录无需手机确认” 。
+4. 浏览器打开 `http://127.0.0.1:6099/webui?token=napcat`
+	- 在 “网络设置” 中新建一个 “WebSocket 服务器” 。
+	- “WebSocket 服务器” 设置保持默认并勾选启用即可。
 
 
 ## 用法
-登录成功后，将下面的 verifyKey 和 qq 改为你自己的，然后就能用代码收发 QQ 消息了。
+登录成功后，将下面的 对方qq号 和 图片地址或网址 改为你自己的，然后就能用代码收发 QQ 消息了。
 ```AutoHotkey
-verifyKey := "xxxxxxxx"                                                   ; 步骤2记录下的 verifyKey
-qq        := 123456                                                       ; 步骤3登录的 qq 号
-qqbot     := new mirai(verifyKey, qq)                                     ; 连接 bot
-会话信息  := qqbot.获取会话信息()                                           ; 获取 bot 信息
-图片网址  := qqbot.上传图片("d:\test.jpg").url                             ; 上传图片并得到 url
-ret       := qqbot.发送好友消息(对方qq号, "测试", {img:图片网址}, "通过")    ; 发送一条消息（文字+图片+文字）
-
+qqbot := new NapCat()                                                       ; 连接已启动的 bot
+ret   := qqbot.发送好友消息(对方qq号, "测试", {img:图片地址或网址}, "通过") ; 发送一条消息（文字+图片+文字）
 loop 5
 {
   收到的消息 := qqbot.获取队列头部()                                        ; 获取收到的消息
+  ToolTip % 收到的消息.1.text
   Sleep 5000
 }
-
-qqbot := ""                                                               ; 释放资源
+qqbot := ""                                                                 ; 释放资源
 ExitApp
 ```
 
 
 ## 其它
-1. 退出控制台官方说要使用命令 `stop` ，直接关闭控制台可能丢数据。
-2. 如果想运行 mcl.cmd 后就自动登录指定 qq ，可以使用命令 `autoLogin` 。
-3. 建议机器人用小号，因为号可能会被风控（风控后一般可自助解封）。
-4. 目前只封装了部分私聊功能，暂不包含任何群聊功能。
-5. 更多官方说明：
-	- https://github.com/mamoe/mirai/blob/dev/docs/ConsoleTerminal.md
+1. 建议机器人用小号，因为号可能会被风控（风控后一般可自助解封）。
+2. 目前只封装了部分私聊功能，暂不包含任何群聊功能。
+3. 更多官方说明：
+	- https://napneko.github.io/guide/start-install
