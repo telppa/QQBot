@@ -2,24 +2,19 @@
 QQ机器人，可以实时收发个人或群消息等。
 
 
-## 兼容
-因 Mirai 项目已实际不可用，现改用 NapCat 项目作为接口封装基础。
-由于两者 API 有所区别，新接口基本不兼容旧接口。
-
-
 ## 准备
 1. 运行 `NapCat.Shell.Windows.OneKey\NapCatInstaller.exe`
-	- 等待安装完成后可得到一个无头版 NapCatQQ 机器人。
+	- 可得到一个无头版 NapCatQQ 机器人。
 2. 运行 `NapCat.xxxxx.Shell\napcat.bat`
-3. 使用手机 QQ 扫步骤2出现的二维码。
+   	- 使用手机 QQ 扫出现的二维码并登录。
 	- 建议在手机上勾选 “下次登录无需手机确认” 。
-4. 浏览器打开 `http://127.0.0.1:6099/webui?token=napcat`
+3. 浏览器打开 `http://127.0.0.1:6099/webui?token=napcat`
 	- 在 “网络设置” 中新建一个 “WebSocket 服务器” 。
-	- “WebSocket 服务器” 设置保持默认并勾选启用即可。
+	- “WebSocket 服务器” 保持默认设置并勾选启用即可。
 
 
 ## 用法
-登录成功后，将下面的 对方qq号 和 图片地址或网址 改为你自己的，然后就能用代码收发 QQ 消息了。
+登录且网络设置成功后，将下方代码中的变量 `对方qq号` 和 `图片地址或网址` 改为你自己的，就能用代码收发 QQ 消息了。
 ```AutoHotkey
 qqbot := new NapCat()                                                       ; 连接已启动的 bot
 ret   := qqbot.发送好友消息(对方qq号, "测试", {img:图片地址或网址}, "通过") ; 发送一条消息（文字+图片+文字）
@@ -39,3 +34,6 @@ ExitApp
 2. 目前只封装了部分私聊功能，暂不包含任何群聊功能。
 3. 更多官方说明：
 	- https://napneko.github.io/guide/start-install
+4. 因 Mirai 项目已实际不可用，20250730改用 NapCat 项目进行接口封装。
+	- 由于两者 API 有所区别，故新接口基本不兼容旧接口。
+
